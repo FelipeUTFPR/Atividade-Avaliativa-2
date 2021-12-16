@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-
+let cont = 0;
 //1//Exibe todas as noticias quando o cliente solicitar
 app.get('/noticia', async(req, res) => {
 
@@ -72,3 +72,59 @@ app.post('/inscricao', async(req, res) => {
  
 
 })
+
+//4//função faz a construção do corpor do email
+async function enviarEmail(titulo, resumo, url, id, email, i){
+    await storage.init();
+
+    //login no servico
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: {
+            user: 'alexa.lind31@ethereal.email',
+            pass: 'UKVBCJXW4YCubsYu4n'
+        }
+    });
+    //cria o corpo do email
+    const info = await transporter.sendMail({
+        from: 'alexa.lind31@ethereal.email',
+        to: email[i],
+        subject: 'Id da  noticia: '+  id +        'Titulo:  '  + titulo,
+        text: 'Resumo da noticia :' + resumo +   ' url: ' +      url
+    });
+    console.log(' Enviado email: ' + nodemailer.getTestMessageUrl(info) + ' para ' + email[i])
+  console.log('\n')
+}
+
+//4//Enviar uma noticia, previamente selecionada,
+//4// para todos os emails cadstrados.
+app.put('/enviar/:id', async (req, res) => {
+    const noticiaID = parseInt(req.params.id);
+    await storage.init();
+    const Emails = await storage.getItem('Email');
+    const Noticias = await storage.getItem('noticia');
+
+     
+    const noticia1 = await Noticias.find(b => b.ID === noticiaID);
+    const{titulo, resumo, url, id} =  noticia1 
+
+    //4// cria interbalor par enviar emails a cada 2 segundos
+    const intervalo = setInterval(() =>{
+        
+            enviarEmail(titulo, resumo, url ,id,Emails, cont)
+        
+        cont++;
+        
+        if(cont == Emails.length ){
+            
+            clearInterval(intervalo);
+            cont = 0;
+        }
+    }, 2000)
+    
+    await storage.init();
+    const enviaEmail = await storage.getItem('Email');
+    res.send(enviaEmail);
+});
+
