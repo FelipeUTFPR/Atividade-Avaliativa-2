@@ -35,3 +35,40 @@ app.post('/noticia', async(req, res) => {
      }
     
  })
+
+ //2//retorna somente a noticia indicada pelo seu id
+app.get('/noticia/:id', async(req, res) => {
+
+    const noticiaID = await parseInt(req.params.id); 
+
+    await storage.init() 
+    const getNoticia = await storage.getItem('noticia') 
+   
+
+    const getNoticiaId = await getNoticia.find(b => b.ID === noticiaID); 
+
+
+    
+    res.send(getNoticiaId)
+    
+
+})
+
+//2//requesição que manda salvar todos os email vindos do cliente
+app.post('/inscricao', async(req, res) => {
+
+    const inscricaoReq = await req.body; 
+
+    if(inscricaoReq != undefined){
+ 
+    await storage.init() 
+   
+   const save =  await storage.setItem('Email', inscricaoReq) 
+   
+   res.status(200).json({save: save}) 
+    } else {
+        res.status(400).send('dados invalidos')
+    }
+ 
+
+})
