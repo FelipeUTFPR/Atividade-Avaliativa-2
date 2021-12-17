@@ -1,0 +1,3 @@
+https://drive.google.com/file/d/1XttDGwq46exw4NennGdNhRov0yD-bXmA/view?usp=sharing
+
+Obs: uma pequena correção no video, ao iniciar o comando "node cliente1.js" o cliente1 irá mandar uma requisição para o servidor guardar todos os emails e noticias no storage.

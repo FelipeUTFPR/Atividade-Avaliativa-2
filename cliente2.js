@@ -1,3 +1,4 @@
+const axios = require('axios').default
 
 //5//Manda exibir todas as noticias.
 axios.get('http://localhost:3000/noticia/')
